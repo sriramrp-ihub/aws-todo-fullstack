@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: todoapp-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootamanpassword
+      MYSQL_DATABASE: todoapp
+      MYSQL_USER: todouser
+      MYSQL_PASSWORD: amantodopassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - todoapp-network
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+     
+ # phpMyAdmin for visual database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: todoapp-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootamanpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - todoapp-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  todoapp-network:
+    driver: bridge
+

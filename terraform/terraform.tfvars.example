@@ -1,0 +1,5 @@
+
+# Never commit terraform.tfvars to git
+
+db_password = "your-database-password-here"
+jwt_secret  = "your-jwt-secret-key-here"
